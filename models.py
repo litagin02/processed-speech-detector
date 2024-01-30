@@ -5,7 +5,7 @@ from torch import nn
 
 
 class AudioClassifier(nn.Module):
-    def __init__(self, hidden_dim=128, feature_dim=128):
+    def __init__(self, hidden_dim=128, feature_dim=128, device="cpu"):
         super(AudioClassifier, self).__init__()
         self.fc = nn.Sequential(
             nn.Linear(feature_dim, hidden_dim),
@@ -14,13 +14,16 @@ class AudioClassifier(nn.Module):
             nn.Dropout(0.5),
             nn.Linear(hidden_dim, 1),
         )
+        self.device = device
 
     def forward(self, x):
         return self.fc(x)
 
     def infer_from_file(self, file_path):
         feature = extract_features(file_path)
-        feature = torch.tensor(feature, dtype=torch.float32).unsqueeze(0)
+        feature = (
+            torch.tensor(feature, dtype=torch.float32).unsqueeze(0).to(self.device)
+        )
 
         with torch.no_grad():
             pred = self.forward(feature)
