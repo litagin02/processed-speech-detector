@@ -2,6 +2,7 @@
 
 Detect whether the speech voice is manually processed.
 
+**I'm noob in DeepLearning and this model is just a test (with ChatGPT assistant), may be overfitting**.
 
 ## Usage
 
