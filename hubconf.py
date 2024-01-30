@@ -9,7 +9,7 @@ URLS = {
 }
 
 
-def processed_speech_detector(task="freq", progress=True):
+def processed_speech_detector(task="freq", device="cpu", progress=True):
     """
     Load the processed speech detection model.
 
@@ -21,11 +21,12 @@ def processed_speech_detector(task="freq", progress=True):
 
     Args:
         task (str): The task for which the model is loaded. Options are 'freq' for filter detection and 'reverb' for reverb detection.
+        device (str): The device on which the model is loaded. Options are 'cpu' and 'cuda'.
 
     Returns:
         torch.nn.Module: The loaded audio classifier model.
     """
-    model = AudioClassifier()
+    model = AudioClassifier(device=device)
     if task == "freq":
         state_dict = torch.hub.load_state_dict_from_url(
             URLS["freq"], progress=progress, map_location="cpu"
@@ -39,4 +40,5 @@ def processed_speech_detector(task="freq", progress=True):
     else:
         raise ValueError(f"Unknown task: {task}")
     model.eval()
+    model.to(device)
     return model
