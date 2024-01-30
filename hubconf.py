@@ -3,8 +3,13 @@ from models import AudioClassifier
 
 dependencies = ["torch", "librosa"]
 
+URLS = {
+    "freq": "https://github.com/litagin02/processed-speech-detector/releases/download/1.0/freq_model.pth",
+    "reverb": "https://github.com/litagin02/processed-speech-detector/releases/download/1.0/reverb_model.pth",
+}
 
-def processed_speech_detector(task="freq"):
+
+def processed_speech_detector(task="freq", progress=True):
     """
     Load the processed speech detection model.
 
@@ -22,13 +27,15 @@ def processed_speech_detector(task="freq"):
     """
     model = AudioClassifier()
     if task == "freq":
-        model.load_state_dict(
-            torch.load("pretrained/freq_model.pth", map_location="cpu")
+        state_dict = torch.hub.load_state_dict_from_url(
+            URLS["freq"], progress=progress, map_location="cpu"
         )
+        model.load_state_dict(state_dict)
     elif task == "reverb":
-        model.load_state_dict(
-            torch.load("pretrained/reverb_model.pth", map_location="cpu")
+        state_dict = torch.hub.load_state_dict_from_url(
+            URLS["reverb"], progress=progress, map_location="cpu"
         )
+        model.load_state_dict(state_dict)
     else:
         raise ValueError(f"Unknown task: {task}")
     model.eval()
